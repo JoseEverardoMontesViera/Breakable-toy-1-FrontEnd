@@ -1,18 +1,104 @@
-.App {
-  text-align: center;
+
+@media screen {
+  .App {
+    text-align: center;
+  
+  }
+  
+  .App-logo {
+    height: 40vmin;
+    pointer-events: none;
+  }
+  .SearchDiv{
+    display: flex;
+    align-items: start;
+    border: 2px solid black;
+    
+    
+  }
+  .SearchDiv>*{
+    margin-right: 30px;
+    margin-top: 15px;
+    margin-left: 12px;
+    font-size: 30px;
+  }
+  .divRow{
+    display: flex;
+    align-items: left;
+  }
+  .divRow>*{
+    margin-right: 100px;
+  }
+  .divRow button{
+    font: inherit;
+    border: 1px solid black;
+    padding-left: 30px;
+    padding-right: 30px;
+ 
+    background-color: rgb(201, 199, 199);
+  }
+  .SearchDiv input{
+    width: 650px;
+    height: 35px;
+    font-size: 30px;
+    border: 1px solid black;
+  }
+  .SearchDiv select{
+    height: 40px;
+    width: 400px;
+    font: inherit;
+    border: 1px solid black;
+  }
+  
+  .divColumn{
+    display:flex;
+    flex-direction: column;
+    align-items: start;
+  }
+  .divColumn>*{
+    margin-top: 5px;
+    margin-bottom: 15px;
+  }
+  .labels{
+    align-items: end;
+  }
+  
+  .newProduct{
+    display: flex;
+  }
+  .Bod{
+    border: 20px, solid, red;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    margin-left: 40px;
+    margin-right: 40px;
+  }
+  
+  /* Aqui parriba es componente Search */
+
+  .newProduct{
+    margin-top: 30px;
+    font-size: 30px;
+    border: 1px solid black;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: rgb(201, 199, 199);
+  }
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
+
+
 
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
   }
 }
-
+p{
+  color: white;
+}
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
