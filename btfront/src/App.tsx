@@ -32,12 +32,15 @@ function App() {
             style: {
                 paddingLeft: '8px', // override the cell padding for head cells
                 paddingRight: '8px',
+                fontSize:'30px',
+                backgroundColor:'rgb(201, 199, 199);',
             },
         },
         cells: {
             style: {
                 paddingLeft: '8px', // override the cell padding for data cells
                 paddingRight: '8px',
+                fontSize:'30px'
                 
             },
         },
@@ -64,7 +67,7 @@ function App() {
             sortable: true
         },
         {
-            name: 'stock',
+            name: 'Stock',
             selector: row => row.productQuantityStock,
             sortable: true
         },
