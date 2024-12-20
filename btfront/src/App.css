@@ -43,11 +43,12 @@
     font-size: 30px;
     border: 1px solid black;
   }
-  .SearchDiv select{
+  .SearchDiv .select{
     height: 40px;
     width: 400px;
     font: inherit;
     border: 1px solid black;
+    border-radius: 0px;
   }
   
   .divColumn{
@@ -67,7 +68,7 @@
     display: flex;
   }
   .Bod{
-    border: 20px, solid, red;
+    
     margin-top: 30px;
     margin-bottom: 30px;
     margin-left: 40px;
@@ -78,6 +79,7 @@
 
   .newProduct{
     margin-top: 30px;
+    margin-bottom: 30px;
     font-size: 30px;
     border: 1px solid black;
     padding-left: 30px;
@@ -87,6 +89,21 @@
     background-color: rgb(201, 199, 199);
   }
 }
+/* Boton de new products */
+
+
+.productsTable{
+  border: 1px solid black;
+  font-style: normal;
+  width: 100%;
+
+}
+.productsTable>*{
+  border: 1px solid black;
+
+}
+
+/* Tabla de productos arriba de esto */
 
 
 

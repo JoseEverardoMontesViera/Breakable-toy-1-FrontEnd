@@ -1,0 +1,121 @@
+[
+  {
+    "productName": "Keely",
+    "productCategory": "Drama",
+    "productPrice": "$52.81",
+    "productExpirationDate": "7/25/2024",
+    "productQuantityStock": 92
+  },
+  {
+    "productName": "Wilden",
+    "productCategory": "Comedy|Drama",
+    "productPrice": "$87.39",
+    "productExpirationDate": "5/17/2024",
+    "productQuantityStock": 99
+  },
+  {
+    "productName": "Lionello",
+    "productCategory": "Adventure|Comedy",
+    "productPrice": "$87.49",
+    "productExpirationDate": "12/20/2024",
+    "productQuantityStock": 32
+  },
+  {
+    "productName": "Ozzy",
+    "productCategory": "Drama|Romance",
+    "productPrice": "$50.67",
+    "productExpirationDate": "5/22/2024",
+    "productQuantityStock": 1
+  },
+  {
+    "productName": "Janeen",
+    "productCategory": "Drama",
+    "productPrice": "$70.57",
+    "productExpirationDate": "11/12/2024",
+    "productQuantityStock": 61
+  },
+  {
+    "productName": "Margalo",
+    "productCategory": "Comedy",
+    "productPrice": "$61.09",
+    "productExpirationDate": "8/8/2024",
+    "productQuantityStock": 74
+  },
+  {
+    "productName": "Sibylle",
+    "productCategory": "Documentary|Drama",
+    "productPrice": "$32.11",
+    "productExpirationDate": "3/2/2024",
+    "productQuantityStock": 30
+  },
+  {
+    "productName": "Taylor",
+    "productCategory": "Drama",
+    "productPrice": "$31.99",
+    "productExpirationDate": "12/18/2024",
+    "productQuantityStock": 62
+  },
+  {
+    "productName": "Zelda",
+    "productCategory": "(no genres listed)",
+    "productPrice": "$13.79",
+    "productExpirationDate": "7/22/2024",
+    "productQuantityStock": 20
+  },
+  {
+    "productName": "Merrielle",
+    "productCategory": "Documentary",
+    "productPrice": "$12.87",
+    "productExpirationDate": "9/20/2024",
+    "productQuantityStock": 22
+  },
+  {
+    "productName": "Golda",
+    "productCategory": "Animation",
+    "productPrice": "$80.94",
+    "productExpirationDate": "1/26/2024",
+    "productQuantityStock": 24
+  },
+  {
+    "productName": "Kare",
+    "productCategory": "Action|Horror|Sci-Fi",
+    "productPrice": "$80.54",
+    "productExpirationDate": "11/8/2024",
+    "productQuantityStock": 57
+  },
+  {
+    "productName": "Nickie",
+    "productCategory": "Comedy|Horror",
+    "productPrice": "$23.09",
+    "productExpirationDate": "8/28/2024",
+    "productQuantityStock": 2
+  },
+  {
+    "productName": "Evangelia",
+    "productCategory": "Horror",
+    "productPrice": "$67.34",
+    "productExpirationDate": "4/2/2024",
+    "productQuantityStock": 53
+  },
+  {
+    "productName": "Wayland",
+    "productCategory": "Drama",
+    "productPrice": "$32.45",
+    "productExpirationDate": "3/31/2024",
+    "productQuantityStock": 40
+  },
+  {
+    "productName": "Jermaine",
+    "productCategory": "Comedy|Romance",
+    "productPrice": "$32.06",
+    "productExpirationDate": "3/31/2024",
+    "productQuantityStock": 41
+  },
+  {
+    "productName": "Milka",
+    "productCategory": "Comedy",
+    "productPrice": "$37.24",
+    "productExpirationDate": "6/6/2024",
+    "productQuantityStock": 89
+  }
+]
