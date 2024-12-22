@@ -1,16 +1,18 @@
 import React from "react";
 import "./App.css";
 import { useState } from 'react';
-import data from './MOCK_DATA copy.json'
+import data from './MOCK_DATA ID.json'
 import DataTable from 'react-data-table-component'
 import TotalNPrices from "./components/TotalNPrices";
 import Select from 'react-select';
 
 function App() {
+  const [tableRegisters, setTableRegisters]=useState(data)
   const [registers, setRegisters]=useState(data)
-    const handlerName = (e) =>{
+  const [inputValue, setInputValue]=useState('')
+    const handlerName = (searchTerm) =>{
         const filteredData = data.filter(record=>{
-            return record.productName.toLowerCase().includes(e.target.value.toLowerCase())
+            return record.productName.toLowerCase().includes(searchTerm.toLowerCase())
         })
         setRegisters(filteredData)
     }
@@ -21,11 +23,18 @@ function App() {
         setRegisters(filteredData)
     }
     
+    const onSearch = (searchTerm) =>{
+      handlerName(searchTerm);
+    }
+
+    const changeInputValue = (event)=>{
+      setInputValue(event.target.value);
+    }
 
     const customStyles = {
         rows: {
             style: {
-                minHeight: '72px', // override the row height
+                minHeight: '80px', // override the row height
             },
         },
         headCells: {
@@ -44,6 +53,16 @@ function App() {
                 
             },
         },
+        pagination:{
+          style:{
+            fontSize: '25px',
+          },
+          pageButtonsStyle:{
+            padding: '9px',
+            margin: '1  px',
+          }
+        }
+        
     };
     const columns = [
         {
@@ -77,7 +96,7 @@ function App() {
     ];
   return (
     <div className="Bod">
-      {/* Inicia search */}
+      {/*  search Begins */}
       <div className="SearchDiv">
         <div className="divColumn labels">
           <label htmlFor="SearchName">Name</label>
@@ -85,13 +104,10 @@ function App() {
           <label htmlFor="SearchAvailability"> Availability</label>
         </div>
         <div className="divColumn">
-          <input
-            type="text"
-            name="SearchName"
-            id="searchName"
-            onChange={handlerName}
+          <input type="text" name="SearchName"
+            id="searchName" value={inputValue} onChange={changeInputValue}
           />
-          {/* Select de react */}
+          {/* react Select */}
           <Select className="select" options = {[]} onChange={handlerCategory} defaultValue={{label:'Nothing selected', value:'nothing'}}/>
           {/* <select name="SearchCategory" id="searchCategory">
             <option value="1">Ejemplo1</option>
@@ -99,15 +115,14 @@ function App() {
           </select> */}
           <div className="divRow">
             <select name="SearchAvailability" className="select" id="searchAvailability">
-              <option value="1">Ejemplo1</option>
-              <option value="2">Ejemplo2</option>
+              {/* {this.tableRegisters.map(element=>(<option key={element.productId} value={element.productId}>{element.productCategory}</option>))} */}
             </select>
-          {/* Select de react */}
-            <button onClick={handlerName}>Search</button>
+          {/* react Select */}
+            <button onClick={()=>onSearch(inputValue)}>Search</button>
           </div>
         </div>
       </div>
-      {/* termina  search */}
+      {/* search ends */}
       <button className="newProduct">New Product</button>
       {/* <ProductsTable/> */}
       <div>
@@ -120,8 +135,13 @@ function App() {
           fixedHeader
         />
       </div>
+      {/* ProductsTable ends */}
       <div className="carrousel"></div>
-      <TotalNPrices />
+      {/* Total princes begins */}
+      <div className="totalPrices">
+
+      </div>
+      {/* Total prices ends */}
     </div>
   );
 }

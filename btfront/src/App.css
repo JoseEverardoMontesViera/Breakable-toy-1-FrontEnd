@@ -9,6 +9,7 @@
     height: 40vmin;
     pointer-events: none;
   }
+  /* Begins search component */
   .SearchDiv{
     display: flex;
     align-items: start;
@@ -75,7 +76,7 @@
     margin-right: 40px;
   }
   
-  /* Aqui parriba es componente Search */
+  /* End of Search component */
 
   .newProduct{
     margin-top: 30px;
@@ -89,7 +90,7 @@
     background-color: rgb(201, 199, 199);
   }
 }
-/* Boton de new products */
+/* new products button */
 
 
 .productsTable{
@@ -103,9 +104,12 @@
 
 }
 
-/* Tabla de productos arriba de esto */
+/* Products table is up this */
 
-
+.totalPrices{
+  width: 100%;
+  border: 2px solid black ;
+}
 
 
 @media (prefers-reduced-motion: no-preference) {
