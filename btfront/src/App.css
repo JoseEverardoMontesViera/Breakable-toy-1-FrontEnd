@@ -112,6 +112,25 @@
 }
 
 
+/* Action buttons */
+.actionButtons{
+  display: flex;
+  align-items: center;
+  width: 100%;
+
+}
+
+.modifyButton{
+  width: 150px;
+}
+
+.deleteButton{
+  width: 150px;
+}
+
+
+/* Action buttons */
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
