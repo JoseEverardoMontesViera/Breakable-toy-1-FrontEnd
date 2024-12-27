@@ -6,9 +6,9 @@ export default function Modal({close, content}){
                 return <ModalBackArea onClick={close}>
                 <ModalArea onClick={(e) => e.stopPropagation() }> 
                     <Title> Product </Title>
-                    <BtnClose onClick={close}> X </BtnClose>
                     <br /> 
                     {content}
+                    <BtnClose onClick={close}> Cancel </BtnClose>
                 </ModalArea>
             </ModalBackArea>  
             
@@ -33,7 +33,7 @@ const ModalArea = styled.div`
     max-width: 90%;
     max-height: 90%;
     padding: 20px;
-    background: #80ccff;
+    background:rgb(193, 195, 196);
     position: relative;
     display: block;
     width: max-content;
