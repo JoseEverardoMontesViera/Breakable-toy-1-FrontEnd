@@ -4,7 +4,9 @@
     text-align: center;
   
   }
-  
+  button{
+    cursor: pointer;
+  }
   .App-logo {
     height: 40vmin;
     pointer-events: none;
@@ -122,14 +124,59 @@
 
 .modifyButton{
   width: 150px;
+  cursor: pointer;
 }
 
 .deleteButton{
   width: 150px;
+  cursor: pointer;
 }
 
 
 /* Action buttons */
+
+
+/* newProduct labels, inputs and button */
+.newProduct{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.columnNewProduct{
+  display: flex;
+  flex-direction: column;
+}
+.columnNewProduct input{
+  height: 30px;
+  font-size: 25px;
+  margin-left: 30px;
+}
+.columnNewProduct select{
+  height: 30px;
+  font-size: 25px;
+  margin-left: 30px;
+}
+.columnNewProduct label{
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+}
+.rowNewProduct{
+  display: flex;
+}
+.buttonNewProduct{
+  cursor: pointer;
+  margin-top: 15px;
+  width: 80px;
+  height: 50px;
+  font-size: 25px;
+}
+.newProductForm{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+/* newProduct labels, inputs and button */
 
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {

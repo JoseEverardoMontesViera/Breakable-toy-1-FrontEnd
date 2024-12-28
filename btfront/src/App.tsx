@@ -1,11 +1,9 @@
 import React from "react";
 import "./App.css";
 import { useState, useEffect } from 'react';
-// import data from './MOCK_DATA ID.json'
 import DataTable from 'react-data-table-component'
-import TotalNPrices from "./components/TotalNPrices";
-import Select from 'react-select';
 import Modal from './components/Modal';
+import {useForm} from "react-hook-form"
 
 
 function App() {
@@ -17,10 +15,13 @@ function App() {
   const [summaryRegisters, setSummaryRegisters]=useState([])
   const [inputValue, setInputValue]=useState('')
   const [catgorySelected, setCategorySelected]=useState('')
-  const [available, setAvailable]=useState(false)
+  const [available, setAvailable]=useState("true")
+  const [isNewCategorie, setNewCategorie]=useState(false)
   const [categoryValue, setCategoryValue]=useState([])
   const [isOpen, setIsOpen]= useState(false);
   const [isOpenModify, setIsOpenModify]= useState(false);
+  const [newProductModalInfo, SetnewProductModalInfo]= useState('');
+  const {register, formState: {errors},handleSubmit} = useForm();
   
 
   const fetchData = async () => {
@@ -60,7 +61,6 @@ function App() {
       }
       const result:[] = await response.json();
       setCategoryValue(result);
-      console.log("categorias "+result)
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
@@ -71,21 +71,20 @@ function App() {
     fetchData();
     getSummary();
     getCategories();
-     // Llamamos a la función para hacer la solicitud GET.
+     
   },[]); // El arreglo vacío asegura que esto se ejecute solo una vez al montar el componente.
 
-  if (loading) {
-    // Si estamos en estado de carga, mostramos el spinner o mensaje de carga
-    return <p>Cargando productos...</p>;
-  }
   
     const handleCloseModal =() =>{
         setIsOpen(!isOpen)
+        window.location.reload();
     }
  
     const handleCloseModalModify =() =>{
         setIsOpen(!isOpenModify)
+        window.location.reload();
     }
+
     const handlerName = (searchTerm, category, available) =>{
       console.log(searchTerm," ", category," ", available)
       if(available=="true"){
@@ -107,6 +106,40 @@ function App() {
             return record.productCategory.toLowerCase().includes(e.target.value.toLowerCase())
         })
         setRegisters(filteredData)
+    }
+
+    const newProductSubmit = (data) =>{
+      const postUrl = "http://localhost:9090/products"
+      if(data.productCategory=="new"){
+        data.productCategory= data.productNewCategory
+      }
+      data.productExpirationDate = String(data.productExpirationDate);
+      delete data['productNewCategory'];
+      fetch(postUrl,{
+        method:"POST",
+        body:JSON.stringify(data),
+        headers:{"Content-type":"application/json"}
+      }).then(response => { 
+        if(response.status==200){
+          SetnewProductModalInfo("The product has been added")
+        }
+        else{
+          SetnewProductModalInfo("Something went wrong :(")
+        }
+      })
+    }
+    const openEditModal= (id) =>{
+      console.log(id)
+    }
+    const deleteProduct= (data) =>{
+      console.log(data)
+      const deleteUrl = "http://localhost:9090/products/"+data+"/delete"
+      fetch(deleteUrl,{
+        method:"DELETE",
+        body:JSON.stringify(data),
+        headers:{"Content-type":"application/json"}
+      })
+      window.location.reload();
     }
     const gatherCategories = (data)=>{
       console.log(data)
@@ -139,6 +172,19 @@ function App() {
     }
     const changeAvailability = (event)=>{
       setAvailable(event.target.value);
+    }
+    const categorieChange = (event)=>{
+      if(event==undefined){
+        console.log("indefinido soy")
+      }
+      console.log("cambié")
+      if(event.target.value=="new"){
+        setNewCategorie(true);
+      }
+      else{
+        setNewCategorie(false);
+
+      }
     }
     const ButtonModify = () => <button type="button">Modify</button>;
     const ButtonDelete = () => <button type="button">Delete</button>;
@@ -221,7 +267,7 @@ function App() {
         },
         {
             name: 'Price',
-            selector: row => row.productPrice,
+            selector: row => "$"+row.productPrice,
             sortable: true
         },
         {
@@ -239,7 +285,7 @@ function App() {
             name: 'Actions',
             button: true,
             minWidth:'130px',
-		        cell: () => <div className="actionButtons"><button className="modifyButton">Modify</button> <button className="deleteButton">Delete</button></div> 
+		        cell: (row) => <div className="actionButtons"><button className="modifyButton" onClick={()=>openEditModal(row.productId)}>Edit</button> <button className="deleteButton" onClick={()=>deleteProduct(row.productId)}>Delete</button></div> 
         },
     ];
     const tableSummaryColumns = [
@@ -256,12 +302,12 @@ function App() {
         },
         {
             name: 'Total value on stock',
-            selector: row => row.totalValue,
+            selector: row => "$"+row.totalValue,
             sortable: true
         },
         {
             name: 'Average price on stock',
-            selector: row => row.averagePrice,
+            selector: row => "$"+row.averagePrice,
             sortable: true
         },
         
@@ -300,7 +346,45 @@ function App() {
       </div>
       {/* search ends */}
       <button className="newProduct" onClick={()=>setIsOpen(true)}>New Product</button>
-      { isOpen ? <Modal close={handleCloseModal} content={<div><h1>HOLA</h1></div>}/> : null}
+      {/* New Product Modal */}
+      { isOpen ? <Modal close={handleCloseModal} content={<div className="newProduct">
+        <form className="newProductForm" onSubmit={handleSubmit(newProductSubmit)}>
+          <div className="rowNewProduct">
+            <div className="columnNewProduct">
+              <label htmlFor="productName">Name </label>  
+              <label htmlFor="productCategory">Caregories </label>
+              {isNewCategorie?<br />:null}
+              <label htmlFor="productQuantityStock">Stock </label>
+              <label htmlFor="productPrice">Unit Price </label>
+              <label htmlFor="productExpirationDate">Expiration Date </label>
+            </div>
+            <div className="columnNewProduct">
+              <input type="text" name="productName" required placeholder="Hat" {...register('productName',
+                {maxLength:120,
+                  minLength:2,
+                  required:true
+                }
+              )}/>
+              {errors.productName?.type==='required' && <p>You have to write a name</p>}
+              {/* <input type="text" name="productCategory" placeholder="Clothes"/> */}
+              <select  {...register('productCategory',{required:true})} onChange={categorieChange} name="productCategory"  >
+                {/* SI DA ALGUN PROBLEMA COMO QUE NO ENTRE A ONCHANGE, ES POSIBLE EL REGISTER */}
+                <option key="0" value="0">No category selected</option>
+                {categoryValue.map(element=>(<option key={element} value={element}>{element}</option>))}
+                <option key="new" value="new">Create a new Category!</option>
+              </select>
+              {isNewCategorie?<input type="text" required name="productNewCategory" placeholder="Clothes" {...register('productNewCategory',{required:true})}/> : null}
+              <input type="number" required name="productQuantityStock" placeholder="45" {...register('productQuantityStock',{required:true})}/>
+              <input type="number" required  name="productPrice" placeholder="40" {...register('productPrice',{required:true})}/>
+              <input type="date"  name="productExpirationDate"  {...register('productExpirationDate')}/>
+            </div>
+          </div>
+            <p>{newProductModalInfo}</p>
+          <button className="buttonNewProduct" type="submit">Save</button>
+        </form>
+        
+      </div>}/> : null}
+      {/* New Product Modal */}
       { isOpenModify ? <Modal close={handleCloseModal} content={'contenido'}/> : null}
       
       {/* <ProductsTable/> */}
