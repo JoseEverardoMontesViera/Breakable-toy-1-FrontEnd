@@ -21,7 +21,14 @@ function App() {
   const [isOpen, setIsOpen]= useState(false);
   const [isOpenModify, setIsOpenModify]= useState(false);
   const [newProductModalInfo, SetnewProductModalInfo]= useState('');
+  const [editProductModalInfo, SeteditProductModalInfo]= useState('');
   const {register, formState: {errors},handleSubmit} = useForm();
+  const [editId, setEditId]=useState(0)
+  const [editName, setEditName]=useState("")
+  const [editCategory, setEditCategory]=useState("")
+  const [editStock, setEditStock]=useState(0)
+  const [editUnitePrice, setEditUnitePrice]=useState(0)
+  const [editExpirationDate, setEditExpirationDate]=useState("")
   
 
   const fetchData = async () => {
@@ -35,9 +42,7 @@ function App() {
       setRegisters(result);
     } catch (error) {
       console.error('Error fetching data:', error);
-    } finally {
-      setLoading(false); // Una vez que la solicitud termine, cambiamos `loading` a `false`
-    }
+    } 
   };
   const getSummary = async () => {
     try {
@@ -49,9 +54,7 @@ function App() {
       setSummaryRegisters(result);
     } catch (error) {
       console.error('Error fetching data:', error);
-    } finally {
-      setLoading(false); // Una vez que la solicitud termine, cambiamos `loading` a `false`
-    }
+    } 
   };
   const getCategories = async () => {
     try {
@@ -128,8 +131,44 @@ function App() {
         }
       })
     }
-    const openEditModal= (id) =>{
-      console.log(id)
+    const openEditModal= async (id)=>{
+      let search = await gettingSearchedItem(id)
+      setEditId(search.productId)
+      setEditName(search.productName)
+      setEditCategory(search.productCategory)
+      setEditStock(search.productQuantityStock)
+      setEditUnitePrice(search.productPrice)
+      setEditExpirationDate(search.productExpirationDate)
+      setIsOpenModify(true);
+    }
+    const gettingSearchedItem= async (id) =>{
+      const response = await fetch("http://localhost:9090/products/search/"+String(id));
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+      const result = await response.json();
+      return result
+    }
+    const editProductSubmit = (data) =>{
+      console.log(data)
+      const editUrl = "http://localhost:9090/products/"+String(editId)
+      if(data.productCategory=="new"){
+        data.productCategory= data.productNewCategory
+      }
+      data.productExpirationDate = String(data.productExpirationDate);
+      delete data['productNewCategory'];
+      fetch(editUrl,{
+        method:"PUT",
+        body:JSON.stringify(data),
+        headers:{"Content-type":"application/json"}
+      }).then(response => { 
+        if(response.status==200){
+          SeteditProductModalInfo("The product has been modified correctly")
+        }
+        else{
+          SeteditProductModalInfo("Something went wrong :(")
+        }
+      })
     }
     const deleteProduct= (data) =>{
       console.log(data)
@@ -385,7 +424,42 @@ function App() {
         
       </div>}/> : null}
       {/* New Product Modal */}
-      { isOpenModify ? <Modal close={handleCloseModal} content={'contenido'}/> : null}
+      { isOpenModify ? <Modal close={handleCloseModal} content={<div className="newProduct">
+        <form className="newProductForm" onSubmit={handleSubmit(editProductSubmit)}>
+          <div className="rowNewProduct">
+            <div className="columnNewProduct">
+              <label htmlFor="productName">Name </label>  
+              <label htmlFor="productCategory">Caregories </label>
+              {isNewCategorie?<br />:null}
+              <label htmlFor="productQuantityStock">Stock </label>
+              <label htmlFor="productPrice">Unit Price </label>
+              <label htmlFor="productExpirationDate">Expiration Date </label>
+            </div>
+            <div className="columnNewProduct">
+              <input type="text" defaultValue={editName} name="productName" required placeholder="Hat" {...register('productName',
+                {maxLength:120,
+                  minLength:2,
+                }
+              )}/>
+              {errors.productName?.type==='required' && <p>You have to write a name</p>}
+              {/* <input type="text" name="productCategory" placeholder="Clothes"/> */}
+              <select  {...register('productCategory')} onChange={categorieChange} name="productCategory" required defaultValue={editCategory}  >
+                {/* SI DA ALGUN PROBLEMA COMO QUE NO ENTRE A ONCHANGE, ES POSIBLE EL REGISTER */}
+                <option key="0" value="0">No category selected</option>
+                {categoryValue.map(element=>(<option key={element} value={element}>{element}</option>))}
+                <option key="new" value="new">Create a new Category!</option>
+              </select>
+              {isNewCategorie?<input type="text" required name="productNewCategory" placeholder="Clothes" {...register('productNewCategory')}/> : null}
+              <input type="number" defaultValue={editStock} onChange={(e) => setEditStock(Number(e.target.value))} required name="productQuantityStock" placeholder="45" {...register('productQuantityStock')}/>
+              <input type="number" defaultValue={editUnitePrice} required  name="productPrice" placeholder="40" {...register('productPrice')}/>
+              <input type="date" defaultValue={editExpirationDate} name="productExpirationDate"  {...register('productExpirationDate')}/>
+            </div>
+          </div>
+            <p>{editProductModalInfo}</p>
+          <button className="buttonNewProduct" type="submit">Save</button>
+        </form>
+        
+      </div>}/> : null}
       
       {/* <ProductsTable/> */}
       <div>
