@@ -29,6 +29,7 @@ function App() {
   const [editStock, setEditStock]=useState(0)
   const [editUnitePrice, setEditUnitePrice]=useState(0)
   const [editExpirationDate, setEditExpirationDate]=useState("")
+  const [rowsWith0Stock,setRowsWith0Stock]=useState([])
   
 
   const fetchData = async () => {
@@ -40,6 +41,7 @@ function App() {
       const result:[] = await response.json();
       setData(result);
       setRegisters(result);
+      console.log("data fetched")
     } catch (error) {
       console.error('Error fetching data:', error);
     } 
@@ -155,6 +157,7 @@ function App() {
       if(data.productCategory=="new"){
         data.productCategory= data.productNewCategory
       }
+      
       data.productExpirationDate = String(data.productExpirationDate);
       delete data['productNewCategory'];
       fetch(editUrl,{
@@ -225,8 +228,29 @@ function App() {
 
       }
     }
-    const ButtonModify = () => <button type="button">Modify</button>;
-    const ButtonDelete = () => <button type="button">Delete</button>;
+
+
+    const reStockHandler = (id)=>{
+      const reStock = "http://localhost:9090/products/"+id+"/instock"
+           fetch(reStock,{
+             method:"PUT",
+             body:JSON.stringify(data),
+             headers:{"Content-type":"application/json"}
+           })
+           window.location.reload();
+    }
+    const outStockHandler = (id)=>{
+      const outOfStock = "http://localhost:9090/products/"+id+"/outofstock"
+           fetch(outOfStock,{
+             method:"POST",
+             body:JSON.stringify(data),
+             headers:{"Content-type":"application/json"}
+           })
+           window.location.reload();
+    }
+    
+    
+    
     const tableProducts = {
         rows: {
             style: {
@@ -294,31 +318,45 @@ function App() {
         
     };
     const columns = [
+
+        {
+            name: '',
+            maxWidth:'1px',
+            cell: (row) => row.productQuantityStock==0?<input type="checkbox" className="checkbox"  defaultChecked={true} onClick={()=>reStockHandler(row.productId)} /> : <input type="checkbox" className="checkbox"  defaultChecked={false} onClick={()=>outStockHandler(row.productId)} />
+        },
         {
             name: 'Category',
             selector: row => row.productCategory,
-            sortable: true
+            sortable: true,
+            maxWidth:'300px',
+            minWidth:'200px',
         },
         {
             name: 'Name',
             selector: row => row.productName,
-            sortable: true
+            sortable: true,
+            maxWidth:'250px',
+            minWidth:'200px',
         },
         {
             name: 'Price',
             selector: row => "$"+row.productPrice,
-            sortable: true
+            sortable: true,
+            maxWidth:'200px',
+            minWidth:'150px',
         },
         {
             name: 'Expiration date',
             selector: row => row.productExpirationDate,
-            sortable: true
+            sortable: true,
+            maxWidth:'300px',
+            minWidth:'180px',
         },
         {
             name: 'Stock',
             selector: row => row.productQuantityStock,
             sortable: true,
-            maxWidth:'150px'
+            maxWidth:'130px'
         },
         {
             name: 'Actions',
@@ -331,23 +369,27 @@ function App() {
         {
             name: 'Categories',
             selector: row => row.categoryName,
-            sortable: true
+            sortable: true,
+            maxWidth:'200px'
             
         },
         {
             name: 'Total products on stock',
             selector: row => row.totalProducts,
-            sortable: true
+            sortable: true,
+            minWidth:'380px'
         },
         {
             name: 'Total value on stock',
             selector: row => "$"+row.totalValue,
-            sortable: true
+            sortable: true,
+            minWidth:'380px'
         },
         {
             name: 'Average price on stock',
             selector: row => "$"+row.averagePrice,
-            sortable: true
+            sortable: true,
+            minWidth:'380px'
         },
         
     ];
@@ -445,7 +487,7 @@ function App() {
               {/* <input type="text" name="productCategory" placeholder="Clothes"/> */}
               <select  {...register('productCategory')} onChange={categorieChange} name="productCategory" required defaultValue={editCategory}  >
                 {/* SI DA ALGUN PROBLEMA COMO QUE NO ENTRE A ONCHANGE, ES POSIBLE EL REGISTER */}
-                <option key="0" value="0">No category selected</option>
+                <option key="0" value="No category selected">No category selected</option>
                 {categoryValue.map(element=>(<option key={element} value={element}>{element}</option>))}
                 <option key="new" value="new">Create a new Category!</option>
               </select>
@@ -466,7 +508,11 @@ function App() {
         <DataTable
           columns={columns}
           data={registers}
-          selectableRows
+          // selectableRows
+          
+          // selectableRowSelected={rowSelectCritera}
+          // onSelectedRowsChange={handleSelectedRow}
+          
           pagination
           customStyles={tableProducts}
           fixedHeader

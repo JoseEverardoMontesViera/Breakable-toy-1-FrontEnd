@@ -178,6 +178,15 @@
 }
 /* newProduct labels, inputs and button */
 
+
+/* checkbox */
+.checkbox{
+  width: 35px;
+  height: 35px;
+
+}
+
+/* checkbox */
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
