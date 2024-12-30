@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import DataTable from 'react-data-table-component'
 import Modal from './components/Modal';
 import {useForm} from "react-hook-form"
+import { MultiSelect } from 'primereact/multiselect';
 
 
 function App() {
@@ -25,7 +26,7 @@ function App() {
   const {register, formState: {errors},handleSubmit} = useForm();
   const [editId, setEditId]=useState(0)
   const [editName, setEditName]=useState("")
-  const [editCategory, setEditCategory]=useState("")
+  const [editCategory, setEditCategory]=useState([])
   const [editStock, setEditStock]=useState(0)
   const [editUnitePrice, setEditUnitePrice]=useState(0)
   const [editExpirationDate, setEditExpirationDate]=useState("")
@@ -52,7 +53,7 @@ function App() {
       if (!response.ok) {
         throw new Error("Failed to fetch data");
       }
-      const result:[] = await response.json();
+      const result:[] = await response.json();      
       setSummaryRegisters(result);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -91,19 +92,70 @@ function App() {
     }
 
     const handlerName = (searchTerm, category, available) =>{
-      console.log(searchTerm," ", category," ", available)
-      if(available=="true"){
-        const filteredData = data.filter(record=>{
-            return record.productName.toLowerCase().includes(searchTerm.toLowerCase()) && record.productCategory.toLowerCase().includes(category.toLowerCase()) && record.productQuantityStock !=0
-        })
+      // console.log(category," ola")
+      // const fruits = ["Banana", "Orange", "Apple", "Mango"];
+      // const frutita= ["Banana", "Orange"]
+      // const fru = ["Banana"]
+      // console.log(fruits.includes(frutita.toString()))
+      // AQUI ES EL PUNTO DE RETORNO
+      let filteredData = []
+      // let categoriesToSearch = ""
+       if(category.length!=""){
+        category.forEach(element => {
+          if(available=="true"){
+            filteredData.push(data.filter(record=>{
+            return record.productName.toLowerCase().includes(searchTerm.toLowerCase()) && record.productQuantityStock !=0 && record.productCategory.includes(element)
+        }).pop())
+        console.log(filteredData)
+        console.log(registers)
         setRegisters(filteredData)
-      }
-      else{
-        const filteredData = data.filter(record=>{
-          return record.productName.toLowerCase().includes(searchTerm.toLowerCase()) && record.productCategory.toLowerCase().includes(category.toLowerCase()) && record.productQuantityStock ==0
-      })
-      setRegisters(filteredData)
-      }
+          }
+          else if(available=="false"){
+            filteredData.push(data.filter(record=>{
+              return record.productName.toLowerCase().includes(searchTerm.toLowerCase()) && record.productQuantityStock ==0 && record.productCategory.includes(element) 
+          }).pop())
+          let filtered  = filteredData[0]
+        setRegisters(filteredData)
+          }
+          else{
+            filteredData.push(data.filter(record=>{
+              return record.productName.toLowerCase().includes(searchTerm.toLowerCase()) && record.productCategory.includes(element)
+          }).pop())
+          let filtered  = filteredData[0]
+        setRegisters(filteredData)
+          }
+            });
+       }
+       else{
+        
+            if(available=="true"){
+              filteredData.push(data.filter(record=>{
+              return record.productName.toLowerCase().includes(searchTerm.toLowerCase()) && record.productQuantityStock !=0
+            }).pop())
+            console.log(registers);
+            setRegisters(filteredData)
+            }
+            else if(available=="false"){
+              filteredData.push(data.filter(record=>{
+                return record.productName.toLowerCase().includes(searchTerm.toLowerCase()) && record.productQuantityStock ==0
+            }).pop())
+            setRegisters(filteredData)
+            }
+            else{
+              filteredData.push(data.filter(record=>{
+                return record.productName.toLowerCase().includes(searchTerm.toLowerCase())
+            }).pop())
+            setRegisters(filteredData)
+            }
+       }
+      //   category.forEach(element => {
+      //     categoriesToSearch+=element+",";
+      //   });
+      // }
+      // let categoryTerm = categoriesToSearch.slice(0, -1);
+      // console.log(categoryTerm);
+      
+      
         // setRegisters(filteredData)
     }
     const handlerCategory = (e) =>{
@@ -114,30 +166,42 @@ function App() {
     }
 
     const newProductSubmit = (data) =>{
-      const postUrl = "http://localhost:9090/products"
-      if(data.productCategory=="new"){
-        data.productCategory= data.productNewCategory
+      if(data.productName.length<2){
+        SetnewProductModalInfo("Your product name is too short :(")
       }
-      data.productExpirationDate = String(data.productExpirationDate);
-      delete data['productNewCategory'];
-      fetch(postUrl,{
-        method:"POST",
-        body:JSON.stringify(data),
-        headers:{"Content-type":"application/json"}
-      }).then(response => { 
-        if(response.status==200){
-          SetnewProductModalInfo("The product has been added")
+      else if(data.productName.length>120){
+        SetnewProductModalInfo("Your product name is too long :(")}
+      else if(data.productCategory=="0" || data.productCategory=="No category selected"){
+        SetnewProductModalInfo("You have to choose a category or create a new one!")
+      }
+      else{
+        const postUrl = "http://localhost:9090/products"
+        if(data.productCategory=="new"){
+          data.productCategory= data.productNewCategory
         }
-        else{
-          SetnewProductModalInfo("Something went wrong :(")
-        }
-      })
+        data.productCategory= [data.productCategory];
+        data.productExpirationDate = String(data.productExpirationDate);
+        delete data['productNewCategory'];
+        fetch(postUrl,{
+          method:"POST",
+          body:JSON.stringify(data),
+          headers:{"Content-type":"application/json"}
+        }).then(response => { 
+          if(response.status==200){
+            SetnewProductModalInfo("The product has been added")
+          }
+          else{
+            SetnewProductModalInfo("Something went wrong :(")
+          }
+        })
+      }
+      
     }
     const openEditModal= async (id)=>{
       let search = await gettingSearchedItem(id)
       setEditId(search.productId)
       setEditName(search.productName)
-      setEditCategory(search.productCategory)
+      setEditCategory([search.productCategory])
       setEditStock(search.productQuantityStock)
       setEditUnitePrice(search.productPrice)
       setEditExpirationDate(search.productExpirationDate)
@@ -152,26 +216,35 @@ function App() {
       return result
     }
     const editProductSubmit = (data) =>{
-      console.log(data)
-      const editUrl = "http://localhost:9090/products/"+String(editId)
-      if(data.productCategory=="new"){
-        data.productCategory= data.productNewCategory
+      if(data.productName.length<2){
+        SeteditProductModalInfo("Your product name is too short :(")
       }
-      
-      data.productExpirationDate = String(data.productExpirationDate);
-      delete data['productNewCategory'];
-      fetch(editUrl,{
-        method:"PUT",
-        body:JSON.stringify(data),
-        headers:{"Content-type":"application/json"}
-      }).then(response => { 
-        if(response.status==200){
-          SeteditProductModalInfo("The product has been modified correctly")
+      else if(data.productName.length>120){
+        SeteditProductModalInfo("Your product name is too long :(")}
+      else if(data.productCategory=="0" || data.productCategory=="No category selected"){
+        SeteditProductModalInfo("You have to choose a category or create a new one!")
+      }
+      else{
+        const editUrl = "http://localhost:9090/products/"+String(editId)
+        if(data.productCategory=="new"){
+          data.productCategory= data.productNewCategory
         }
-        else{
-          SeteditProductModalInfo("Something went wrong :(")
-        }
-      })
+        data.productCategory= [data.productCategory];
+        data.productExpirationDate = String(data.productExpirationDate);
+        delete data['productNewCategory'];
+        fetch(editUrl,{
+          method:"PUT",
+          body:JSON.stringify(data),
+          headers:{"Content-type":"application/json"}
+        }).then(response => { 
+          if(response.status==200){
+            SeteditProductModalInfo("The product has been modified correctly")
+          }
+          else{
+            SeteditProductModalInfo("Something went wrong :(")
+          }
+        })
+      }
     }
     const deleteProduct= (data) =>{
       console.log(data)
@@ -203,6 +276,7 @@ function App() {
       if(category==0){
         category=""
       }
+      console.log(category);
       handlerName(searchTerm, category, available);
     }
 
@@ -228,6 +302,15 @@ function App() {
 
       }
     }
+    const categoryToStrings=(list)=>{
+      let string = []
+      list.forEach(category => {
+        string.push(category)
+        string.push(", ")
+      });
+      string.pop()
+      return string
+    }
 
 
     const reStockHandler = (id)=>{
@@ -248,7 +331,48 @@ function App() {
            })
            window.location.reload();
     }
-    
+    const conditionalRowStyles=[
+      {
+        when: row => (new Date(row.productExpirationDate).getTime() - Date.now())/(1000*60*60*24) < 7,
+        style: {
+          backgroundColor: 'red',
+          color: 'black',
+          '&:hover': {
+            cursor: 'pointer',
+          },
+        },
+      },
+      {
+        when: row => (new Date(row.productExpirationDate).getTime() - Date.now())/(1000*60*60*24) > 15,
+        style: {
+          backgroundColor: 'rgb(97, 241, 97)',
+          color: 'black',
+          '&:hover': {
+            cursor: 'pointer',
+          },
+        },
+      },
+      {
+        when: row => (new Date(row.productExpirationDate).getTime() - Date.now())/(1000*60*60*24) >=7 && (new Date(row.productExpirationDate).getTime() - Date.now())/(1000*60*60*24) <=14,
+        style: {
+          backgroundColor: 'yellow',
+          color: 'black',
+          '&:hover': {
+            cursor: 'pointer',
+          },
+        },
+      },
+      {
+        when: row => row.productExpirationDate=="",
+        style: {
+          backgroundColor: 'white',
+          color: 'black',
+          '&:hover': {
+            cursor: 'pointer',
+          },
+        },
+      },
+    ]
     
     
     const tableProducts = {
@@ -322,39 +446,49 @@ function App() {
         {
             name: '',
             maxWidth:'1px',
-            cell: (row) => row.productQuantityStock==0?<input type="checkbox" className="checkbox"  defaultChecked={true} onClick={()=>reStockHandler(row.productId)} /> : <input type="checkbox" className="checkbox"  defaultChecked={false} onClick={()=>outStockHandler(row.productId)} />
+            cell: (row) => row.productQuantityStock==0 ||row.productQuantityStock=="0"?<input type="checkbox" className="checkbox"  defaultChecked={true} onClick={()=>reStockHandler(row.productId)} /> : <input type="checkbox" className="checkbox"  defaultChecked={false} onClick={()=>outStockHandler(row.productId)} />
         },
         {
             name: 'Category',
-            selector: row => row.productCategory,
+            // selector: row => row.productCategory,
+            cell:(row)=> row.productQuantityStock==0? <div className="striked">{row.productCategory}</div>:<div>{row.productCategory}</div>,
             sortable: true,
             maxWidth:'300px',
             minWidth:'200px',
         },
         {
             name: 'Name',
-            selector: row => row.productName,
+            // selector: row => row.productName,
+            cell:(row)=> row.productQuantityStock==0? <div className="striked">{row.productName}</div>:<div>{row.productName}</div>,
             sortable: true,
             maxWidth:'250px',
             minWidth:'200px',
         },
         {
             name: 'Price',
-            selector: row => "$"+row.productPrice,
+            // selector: row => "$"+row.productPrice,
+            cell:(row)=> row.productQuantityStock==0? <div className="striked">${row.productPrice}</div>:<div>${row.productPrice}</div>,
             sortable: true,
             maxWidth:'200px',
             minWidth:'150px',
         },
         {
             name: 'Expiration date',
-            selector: row => row.productExpirationDate,
+            // selector: row => row.productExpirationDate,
+            cell:(row)=> row.productQuantityStock==0? <div className="striked">{row.productExpirationDate}</div>:<div>{row.productExpirationDate}</div>,
             sortable: true,
             maxWidth:'300px',
             minWidth:'180px',
         },
         {
             name: 'Stock',
-            selector: row => row.productQuantityStock,
+            // selector: row => row.productQuantityStock,
+            cell: (row) => row.productQuantityStock>10? 
+            <div>{row.productQuantityStock}</div>:
+            row.productQuantityStock>5? 
+            <div className="backgroundOrange">{row.productQuantityStock}</div>:
+            row.productQuantityStock<=0?
+            <div className="backgroudColorRed striked">{row.productQuantityStock}</div>:<div className="backgroudColorRed">{row.productQuantityStock}</div>,
             sortable: true,
             maxWidth:'130px'
         },
@@ -406,16 +540,16 @@ function App() {
           <input type="text" name="SearchName"
             id="searchName" value={inputValue} onChange={changeInputValue}
           />
-          {/* react Select */}
-          <select name="SearchCategory" className="select" id="searchCategory" onChange={changeCategorySelected}>
+          {/* react Select categories */}
+          {/* <select name="SearchCategory" className="select" id="searchCategory" onChange={changeCategorySelected}>
             <option key="0" value="0">All categories</option>
-            {/* {categoryValue.map(
-              element=>(<option key={element.productId} value={element.productCategory}>{element.productCategory}</option>))} */}
               {categoryValue.map(element=>(<option key={element} value={element}>{element}</option>))}
-          </select> 
+          </select>  */}
+          <MultiSelect className="select" value={catgorySelected} onChange={changeCategorySelected} options={categoryValue}  placeholder="Select a category" maxSelectedLabels={3} />
+          {/* react Select categories */}
           <div className="divRow">
             <select name="SearchAvailability" className="select" id="searchAvailability" onChange={changeAvailability}>
-              {/* {categoryValue.map(element=>(<option key={element.productId} value={element.productId}>{element.productCategory}</option>))} */}
+              <option value="all" key="1">All availability</option>
               <option value="true" key="1">Available</option>
               <option value="false" key="0">Not available</option>
               
@@ -440,23 +574,19 @@ function App() {
               <label htmlFor="productExpirationDate">Expiration Date </label>
             </div>
             <div className="columnNewProduct">
-              <input type="text" name="productName" required placeholder="Hat" {...register('productName',
-                {maxLength:120,
-                  minLength:2,
-                  required:true
-                }
+              <input type="text" name="productName" required placeholder="Hat" {...register('productName'
               )}/>
               {errors.productName?.type==='required' && <p>You have to write a name</p>}
               {/* <input type="text" name="productCategory" placeholder="Clothes"/> */}
-              <select  {...register('productCategory',{required:true})} onChange={categorieChange} name="productCategory"  >
+              <select  {...register('productCategory')} onChange={categorieChange} name="productCategory"  >
                 {/* SI DA ALGUN PROBLEMA COMO QUE NO ENTRE A ONCHANGE, ES POSIBLE EL REGISTER */}
                 <option key="0" value="0">No category selected</option>
                 {categoryValue.map(element=>(<option key={element} value={element}>{element}</option>))}
                 <option key="new" value="new">Create a new Category!</option>
               </select>
-              {isNewCategorie?<input type="text" required name="productNewCategory" placeholder="Clothes" {...register('productNewCategory',{required:true})}/> : null}
-              <input type="number" required name="productQuantityStock" placeholder="45" {...register('productQuantityStock',{required:true})}/>
-              <input type="number" required  name="productPrice" placeholder="40" {...register('productPrice',{required:true})}/>
+              {isNewCategorie?<input type="text" required name="productNewCategory" placeholder="Clothes" {...register('productNewCategory')}/> : null}
+              <input type="number" required name="productQuantityStock" placeholder="45" {...register('productQuantityStock')}/>
+              <input type="number" required  name="productPrice" placeholder="40" {...register('productPrice')}/>
               <input type="date"  name="productExpirationDate"  {...register('productExpirationDate')}/>
             </div>
           </div>
@@ -478,10 +608,8 @@ function App() {
               <label htmlFor="productExpirationDate">Expiration Date </label>
             </div>
             <div className="columnNewProduct">
-              <input type="text" defaultValue={editName} name="productName" required placeholder="Hat" {...register('productName',
-                {maxLength:120,
-                  minLength:2,
-                }
+              <input type="text" defaultValue={editName} name="productName" required placeholder="Hat" {...register('productName'
+                
               )}/>
               {errors.productName?.type==='required' && <p>You have to write a name</p>}
               {/* <input type="text" name="productCategory" placeholder="Clothes"/> */}
@@ -508,12 +636,8 @@ function App() {
         <DataTable
           columns={columns}
           data={registers}
-          // selectableRows
-          
-          // selectableRowSelected={rowSelectCritera}
-          // onSelectedRowsChange={handleSelectedRow}
-          
           pagination
+          conditionalRowStyles={conditionalRowStyles}
           customStyles={tableProducts}
           fixedHeader
         />

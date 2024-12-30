@@ -123,12 +123,13 @@
 }
 
 .modifyButton{
-  width: 150px;
+  width: 200px;
+  color: black;
   cursor: pointer;
 }
 
 .deleteButton{
-  width: 150px;
+  width: 200px;
   cursor: pointer;
 }
 
@@ -178,7 +179,30 @@
 }
 /* newProduct labels, inputs and button */
 
+/* Special cells themes */
+.backgroundOrange{
+  background-color: orange;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+.backgroudColorRed{
+  background-color: red;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+ 
+}
+.striked{
+  text-decoration: line-through;
+}
+.rdt_TableRow{
+  background-color: black;
+}
 
+/* Special cells themes */
 /* checkbox */
 .checkbox{
   width: 35px;
@@ -187,6 +211,25 @@
 }
 
 /* checkbox */
+
+
+/* select */
+.p-multiselect-panel{
+  background-color: white;
+  border: 1px black solid;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  
+}
+.p-multiselect-item{
+  border-top: 1px black solid;
+  font-size: 30px;
+}
+
+/* .p-multiselect-select-all-label{
+
+} */
+/* select */
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
