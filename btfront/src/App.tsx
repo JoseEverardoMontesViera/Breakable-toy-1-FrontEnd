@@ -13,10 +13,11 @@ function App() {
   const [data,setData]=useState([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [registers, setRegisters]=useState([])
+  const [filteredReg, setFilteredReg]=useState(registers)
   const [summaryRegisters, setSummaryRegisters]=useState([])
   const [inputValue, setInputValue]=useState('')
   const [catgorySelected, setCategorySelected]=useState('')
-  const [available, setAvailable]=useState("true")
+  const [available, setAvailable]=useState("all")
   const [isNewCategorie, setNewCategorie]=useState(false)
   const [categoryValue, setCategoryValue]=useState([])
   const [isOpen, setIsOpen]= useState(false);
@@ -30,8 +31,6 @@ function App() {
   const [editStock, setEditStock]=useState(0)
   const [editUnitePrice, setEditUnitePrice]=useState(0)
   const [editExpirationDate, setEditExpirationDate]=useState("")
-  const [rowsWith0Stock,setRowsWith0Stock]=useState([])
-  
 
   const fetchData = async () => {
     try {
@@ -42,6 +41,7 @@ function App() {
       const result:[] = await response.json();
       setData(result);
       setRegisters(result);
+      setFilteredReg(result)
       console.log("data fetched")
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -92,78 +92,93 @@ function App() {
     }
 
     const handlerName = (searchTerm, category, available) =>{
-      // console.log(category," ola")
-      // const fruits = ["Banana", "Orange", "Apple", "Mango"];
-      // const frutita= ["Banana", "Orange"]
-      // const fru = ["Banana"]
-      // console.log(fruits.includes(frutita.toString()))
-      // AQUI ES EL PUNTO DE RETORNO
       let filteredData = []
+      setFilteredReg(registers)
+      console.log(filteredReg)
+      // let AllCategories = getCategories();
+      // console.log(AllCategories)
       // let categoriesToSearch = ""
-       if(category.length!=""){
+      if(category.length == categoryValue.length){
+        console.log("todas")
+        console.log(available)
+        if(available=="all"){
+          filteredData =(data.filter(record=>{
+          return record.productName.toLowerCase().includes(searchTerm.toLowerCase())
+        }))}
+        else if(available=="true"){
+          filteredData =(data.filter(record=>{
+          return record.productName.toLowerCase().includes(searchTerm.toLowerCase()) && record.productQuantityStock !=0
+        }))}
+        else if(available=="false"){
+          filteredData =(data.filter(record=>{
+          return record.productName.toLowerCase().includes(searchTerm.toLowerCase()) && record.productQuantityStock ==0
+        }))
+      }
+      console.log("todas")
+        setFilteredReg(filteredData)
+
+        console.log(filteredData)  
+      }
+      else if(category!="" && category.length!=0 ){
         category.forEach(element => {
           if(available=="true"){
             filteredData.push(data.filter(record=>{
-            return record.productName.toLowerCase().includes(searchTerm.toLowerCase()) && record.productQuantityStock !=0 && record.productCategory.includes(element)
-        }).pop())
-        console.log(filteredData)
-        console.log(registers)
-        setRegisters(filteredData)
+              console.log(record," recordavailable")
+              return record.productName.toLowerCase().includes(searchTerm.toLowerCase()) && record.productQuantityStock !=0 && record.productCategory.includes(element.toLowerCase())
+            }).pop())
+            
+            console.log(registers)
+            setFilteredReg(filteredData)
           }
           else if(available=="false"){
-            filteredData.push(data.filter(record=>{
+            filteredData = (data.filter(record=>{
               return record.productName.toLowerCase().includes(searchTerm.toLowerCase()) && record.productQuantityStock ==0 && record.productCategory.includes(element) 
-          }).pop())
-          let filtered  = filteredData[0]
-        setRegisters(filteredData)
+          }))
+          
+          setFilteredReg(filteredData)
           }
           else{
             filteredData.push(data.filter(record=>{
               return record.productName.toLowerCase().includes(searchTerm.toLowerCase()) && record.productCategory.includes(element)
           }).pop())
-          let filtered  = filteredData[0]
-        setRegisters(filteredData)
+          console.log(filteredData, " se hizo push")
+          setFilteredReg(filteredData)
           }
             });
        }
        else{
-        
-            if(available=="true"){
-              filteredData.push(data.filter(record=>{
+         console.log(available)
+         if(available=="all"){
+              filteredData =(data.filter(record=>{
+              return record.productName.toLowerCase().includes(searchTerm.toLowerCase())
+            }))
+            console.log(filteredData, " filtrado");
+            setFilteredReg(filteredData)
+            }
+            else if(available=="true"){
+              filteredData =(data.filter(record=>{
+                console.log(record)
               return record.productName.toLowerCase().includes(searchTerm.toLowerCase()) && record.productQuantityStock !=0
-            }).pop())
-            console.log(registers);
-            setRegisters(filteredData)
+            }))
+            console.log(filteredData, " filtrado");
+            setFilteredReg(filteredData)
             }
             else if(available=="false"){
-              filteredData.push(data.filter(record=>{
+              filteredData =(data.filter(record=>{
                 return record.productName.toLowerCase().includes(searchTerm.toLowerCase()) && record.productQuantityStock ==0
-            }).pop())
-            setRegisters(filteredData)
+            }))
+            setFilteredReg(filteredData)
             }
             else{
-              filteredData.push(data.filter(record=>{
+              filteredData =(data.filter(record=>{
                 return record.productName.toLowerCase().includes(searchTerm.toLowerCase())
-            }).pop())
-            setRegisters(filteredData)
+            }))
+            setFilteredReg(filteredData)
             }
        }
-      //   category.forEach(element => {
-      //     categoriesToSearch+=element+",";
-      //   });
-      // }
-      // let categoryTerm = categoriesToSearch.slice(0, -1);
-      // console.log(categoryTerm);
       
-      
-        // setRegisters(filteredData)
     }
-    const handlerCategory = (e) =>{
-        const filteredData = data.filter(record=>{
-            return record.productCategory.toLowerCase().includes(e.target.value.toLowerCase())
-        })
-        setRegisters(filteredData)
-    }
+    
 
     const newProductSubmit = (data) =>{
       if(data.productName.length<2){
@@ -256,22 +271,7 @@ function App() {
       })
       window.location.reload();
     }
-    const gatherCategories = (data)=>{
-      console.log(data)
-      let categories = []
-      data.forEach(product => {
-        if(categories.includes(product.productCategory)==false){
-          categories.push(product.productCategory)
-        }
-        
-      });
-      console.log(categories)
-    }
-    const OnChangeCategory=(e)=>{
-      setCategoryValue(e.target.value)
-      console.log(categoryValue);
-    }
-    
+ 
     const onSearch = (searchTerm, category, available) =>{
       if(category==0){
         category=""
@@ -302,17 +302,6 @@ function App() {
 
       }
     }
-    const categoryToStrings=(list)=>{
-      let string = []
-      list.forEach(category => {
-        string.push(category)
-        string.push(", ")
-      });
-      string.pop()
-      return string
-    }
-
-
     const reStockHandler = (id)=>{
       const reStock = "http://localhost:9090/products/"+id+"/instock"
            fetch(reStock,{
@@ -495,7 +484,8 @@ function App() {
         {
             name: 'Actions',
             button: true,
-            minWidth:'130px',
+            minWidth:'300px',
+            maxWidth:'300px',
 		        cell: (row) => <div className="actionButtons"><button className="modifyButton" onClick={()=>openEditModal(row.productId)}>Edit</button> <button className="deleteButton" onClick={()=>deleteProduct(row.productId)}>Delete</button></div> 
         },
     ];
@@ -540,16 +530,11 @@ function App() {
           <input type="text" name="SearchName"
             id="searchName" value={inputValue} onChange={changeInputValue}
           />
-          {/* react Select categories */}
-          {/* <select name="SearchCategory" className="select" id="searchCategory" onChange={changeCategorySelected}>
-            <option key="0" value="0">All categories</option>
-              {categoryValue.map(element=>(<option key={element} value={element}>{element}</option>))}
-          </select>  */}
           <MultiSelect className="select" value={catgorySelected} onChange={changeCategorySelected} options={categoryValue}  placeholder="Select a category" maxSelectedLabels={3} />
           {/* react Select categories */}
           <div className="divRow">
             <select name="SearchAvailability" className="select" id="searchAvailability" onChange={changeAvailability}>
-              <option value="all" key="1">All availability</option>
+              <option value="all" key="all">All availability</option>
               <option value="true" key="1">Available</option>
               <option value="false" key="0">Not available</option>
               
@@ -574,23 +559,23 @@ function App() {
               <label htmlFor="productExpirationDate">Expiration Date </label>
             </div>
             <div className="columnNewProduct">
-              <input type="text" name="productName" required placeholder="Hat" {...register('productName'
+              <input type="text" name="productName" id="productName" required placeholder="Hat" {...register('productName'
               )}/>
               {errors.productName?.type==='required' && <p>You have to write a name</p>}
               {/* <input type="text" name="productCategory" placeholder="Clothes"/> */}
-              <select  {...register('productCategory')} onChange={categorieChange} name="productCategory"  >
+              <select  data-testid="select" id="productCategory"  {...register('productCategory')} onChange={categorieChange} name="productCategory"  >
                 {/* SI DA ALGUN PROBLEMA COMO QUE NO ENTRE A ONCHANGE, ES POSIBLE EL REGISTER */}
                 <option key="0" value="0">No category selected</option>
-                {categoryValue.map(element=>(<option key={element} value={element}>{element}</option>))}
-                <option key="new" value="new">Create a new Category!</option>
+                {categoryValue.map(element=>(<option key={element+"CategoryNew"} data-testid="select-option" value={element}>{element}</option>))}
+                <option key="new" value="new" data-testid="select-option-new">Create a new Category!</option>
               </select>
               {isNewCategorie?<input type="text" required name="productNewCategory" placeholder="Clothes" {...register('productNewCategory')}/> : null}
-              <input type="number" required name="productQuantityStock" placeholder="45" {...register('productQuantityStock')}/>
-              <input type="number" required  name="productPrice" placeholder="40" {...register('productPrice')}/>
-              <input type="date"  name="productExpirationDate"  {...register('productExpirationDate')}/>
+              <input type="number" id="productQuantityStock" required name="productQuantityStock" placeholder="45" {...register('productQuantityStock')}/>
+              <input type="number" id="productPrice" required  name="productPrice" placeholder="40" {...register('productPrice')}/>
+              <input type="date" id="productExpirationDate" name="productExpirationDate"  {...register('productExpirationDate')}/>
             </div>
           </div>
-            <p>{newProductModalInfo}</p>
+            <p data-testid="newProductModalInfo">{newProductModalInfo}</p>
           <button className="buttonNewProduct" type="submit">Save</button>
         </form>
         
@@ -616,7 +601,7 @@ function App() {
               <select  {...register('productCategory')} onChange={categorieChange} name="productCategory" required defaultValue={editCategory}  >
                 {/* SI DA ALGUN PROBLEMA COMO QUE NO ENTRE A ONCHANGE, ES POSIBLE EL REGISTER */}
                 <option key="0" value="No category selected">No category selected</option>
-                {categoryValue.map(element=>(<option key={element} value={element}>{element}</option>))}
+                {categoryValue.map(element=>(<option key={element+"CategoryModify"} value={element}>{element}</option>))}
                 <option key="new" value="new">Create a new Category!</option>
               </select>
               {isNewCategorie?<input type="text" required name="productNewCategory" placeholder="Clothes" {...register('productNewCategory')}/> : null}
@@ -635,7 +620,7 @@ function App() {
       <div>
         <DataTable
           columns={columns}
-          data={registers}
+          data={filteredReg}
           pagination
           conditionalRowStyles={conditionalRowStyles}
           customStyles={tableProducts}
@@ -659,3 +644,4 @@ function App() {
 }
 
 export default App;
+
