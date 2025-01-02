@@ -1,0 +1,263 @@
+
+@media screen {
+  .App {
+    text-align: center;
+  
+  }
+  button{
+    cursor: pointer;
+  }
+  .App-logo {
+    height: 40vmin;
+    pointer-events: none;
+  }
+  /* Begins search component */
+  .SearchDiv{
+    display: flex;
+    align-items: start;
+    border: 2px solid black;
+    
+    
+  }
+  .SearchDiv>*{
+    margin-right: 30px;
+    margin-top: 15px;
+    margin-left: 12px;
+    font-size: 30px;
+  }
+  .divRow{
+    display: flex;
+    align-items: left;
+  }
+  .divRow>*{
+    margin-right: 100px;
+  }
+  .divRow button{
+    font: inherit;
+    border: 1px solid black;
+    padding-left: 30px;
+    padding-right: 30px;
+ 
+    background-color: rgb(201, 199, 199);
+  }
+  .SearchDiv input{
+    width: 650px;
+    height: 35px;
+    font-size: 30px;
+    border: 1px solid black;
+  }
+  .SearchDiv .select{
+    height: 40px;
+    width: 400px;
+    font: inherit;
+    border: 1px solid black;
+    border-radius: 0px;
+  }
+  
+  .divColumn{
+    display:flex;
+    flex-direction: column;
+    align-items: start;
+  }
+  .divColumn>*{
+    margin-top: 5px;
+    margin-bottom: 15px;
+  }
+  .labels{
+    align-items: end;
+  }
+  
+  .newProduct{
+    display: flex;
+  }
+  .Bod{
+    
+    margin-top: 30px;
+    margin-bottom: 30px;
+    margin-left: 40px;
+    margin-right: 40px;
+  }
+  
+  /* End of Search component */
+
+  .newProduct{
+    margin-top: 30px;
+    margin-bottom: 30px;
+    font-size: 30px;
+    border: 1px solid black;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: rgb(201, 199, 199);
+  }
+}
+/* new products button */
+
+
+.productsTable{
+  border: 1px solid black;
+  font-style: normal;
+  width: 100%;
+
+}
+.productsTable>*{
+  border: 1px solid black;
+
+}
+
+/* Products table is up this */
+
+.totalPrices{
+  width: 100%;
+  border: 2px solid black ;
+}
+
+
+/* Action buttons */
+.actionButtons{
+  display: flex;
+  align-items: center;
+  width: 100%;
+
+}
+
+.modifyButton{
+  width: 200px;
+  color: black;
+  cursor: pointer;
+}
+
+.deleteButton{
+  width: 200px;
+  cursor: pointer;
+}
+
+
+/* Action buttons */
+
+
+/* newProduct labels, inputs and button */
+.newProduct{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.columnNewProduct{
+  display: flex;
+  flex-direction: column;
+}
+.columnNewProduct input{
+  height: 30px;
+  font-size: 25px;
+  margin-left: 30px;
+}
+.columnNewProduct select{
+  height: 30px;
+  font-size: 25px;
+  margin-left: 30px;
+}
+.columnNewProduct label{
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+}
+.rowNewProduct{
+  display: flex;
+}
+.buttonNewProduct{
+  cursor: pointer;
+  margin-top: 15px;
+  width: 80px;
+  height: 50px;
+  font-size: 25px;
+}
+.newProductForm{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+/* newProduct labels, inputs and button */
+
+/* Special cells themes */
+.backgroundOrange{
+  background-color: orange;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+.backgroudColorRed{
+  background-color: red;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+ 
+}
+.striked{
+  text-decoration: line-through;
+}
+.rdt_TableRow{
+  background-color: black;
+}
+
+/* Special cells themes */
+/* checkbox */
+.checkbox{
+  width: 35px;
+  height: 35px;
+
+}
+
+/* checkbox */
+
+
+/* select */
+.p-multiselect-panel{
+  background-color: white;
+  border: 1px black solid;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  
+}
+.p-multiselect-item{
+  border-top: 1px black solid;
+  font-size: 30px;
+}
+
+/* .p-multiselect-select-all-label{
+
+} */
+/* select */
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+p{
+  color: white;
+}
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

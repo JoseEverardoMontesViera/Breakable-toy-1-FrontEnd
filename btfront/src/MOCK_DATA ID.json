@@ -1,0 +1,12 @@
+[{"productId":1,"productName":"Hal","productCategory":"Horror|Sci-Fi","productPrice":"$45.93","productExpirationDate":"6/23/2024","productQuantityStock":83},
+{"productId":2,"productName":"Hal","productCategory":"Adventure|Crime|Drama","productPrice":"$33.77","productExpirationDate":"3/4/2024","productQuantityStock":10},
+{"productId":3,"productName":"Angus","productCategory":"Drama","productPrice":"$55.62","productExpirationDate":"11/26/2024","productQuantityStock":65},
+{"productId":4,"productName":"Illa","productCategory":"Western","productPrice":"$58.62","productExpirationDate":"5/24/2024","productQuantityStock":88},
+{"productId":5,"productName":"Frasquito","productCategory":"Drama|Fantasy|Romance","productPrice":"$59.25","productExpirationDate":"10/12/2024","productQuantityStock":38},
+{"productId":6,"productName":"Illa","productCategory":"Drama","productPrice":"$73.70","productExpirationDate":"8/28/2024","productQuantityStock":79},
+{"productId":7,"productName":"Baryram","productCategory":"Comedy","productPrice":"$96.90","productExpirationDate":"4/22/2024","productQuantityStock":42},
+{"productId":8,"productName":"Homerus","productCategory":"Drama|Musical|Romance","productPrice":"$56.98","productExpirationDate":"3/14/2024","productQuantityStock":1},
+{"productId":9,"productName":"Christin","productCategory":"Drama","productPrice":"$32.83","productExpirationDate":"2/13/2024","productQuantityStock":99},
+{"productId":10,"productName":"Philly","productCategory":"Sci-Fi","productPrice":"$50.02","productExpirationDate":"8/13/2024","productQuantityStock":82},
+{"productId":11,"productName":"Brock","productCategory":"Drama|Thriller","productPrice":"$43.92","productExpirationDate":"5/5/2024","productQuantityStock":77},
+{"productId":12,"productName":"Chelsea","productCategory":"Drama","productPrice":"$48.76","productExpirationDate":"7/19/2024","productQuantityStock":21}]
