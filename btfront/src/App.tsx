@@ -8,10 +8,8 @@ import { MultiSelect } from 'primereact/multiselect';
 
 
 function App() {
-  // let unique = data.map(item => item.productCategory)
-  // .filter((value, index, self) => self.indexOf(value) === index)
+
   const [data,setData]=useState([]);
-  const [loading, setLoading] = useState<boolean>(true);
   const [registers, setRegisters]=useState([])
   const [filteredReg, setFilteredReg]=useState(registers)
   const [summaryRegisters, setSummaryRegisters]=useState([])
@@ -69,9 +67,7 @@ function App() {
       setCategoryValue(result);
     } catch (error) {
       console.error('Error fetching data:', error);
-    } finally {
-      setLoading(false); // Una vez que la solicitud termine, cambiamos `loading` a `false`
-    }
+    } 
   };
   useEffect(() => {
     fetchData();
@@ -86,18 +82,10 @@ function App() {
         window.location.reload();
     }
  
-    const handleCloseModalModify =() =>{
-        setIsOpen(!isOpenModify)
-        window.location.reload();
-    }
-
     const handlerName = (searchTerm, category, available) =>{
       let filteredData = []
       setFilteredReg(registers)
       console.log(filteredReg)
-      // let AllCategories = getCategories();
-      // console.log(AllCategories)
-      // let categoriesToSearch = ""
       if(category.length == categoryValue.length){
         console.log("todas")
         console.log(available)
@@ -122,12 +110,13 @@ function App() {
       else if(category!="" && category.length!=0 ){
         category.forEach(element => {
           if(available=="true"){
-            filteredData.push(data.filter(record=>{
+            console.log(true)
+            filteredData =(data.filter(record=>{
               console.log(record," recordavailable")
-              return record.productName.toLowerCase().includes(searchTerm.toLowerCase()) && record.productQuantityStock !=0 && record.productCategory.includes(element.toLowerCase())
-            }).pop())
+              return record.productName.toLowerCase().includes(searchTerm.toLowerCase()) && record.productQuantityStock >0 && record.productCategory.includes(element)
+            }))
             
-            console.log(registers)
+            console.log(filteredData + "we")
             setFilteredReg(filteredData)
           }
           else if(available=="false"){
@@ -138,9 +127,9 @@ function App() {
           setFilteredReg(filteredData)
           }
           else{
-            filteredData.push(data.filter(record=>{
+            filteredData =(data.filter(record=>{
               return record.productName.toLowerCase().includes(searchTerm.toLowerCase()) && record.productCategory.includes(element)
-          }).pop())
+          }))
           console.log(filteredData, " se hizo push")
           setFilteredReg(filteredData)
           }
