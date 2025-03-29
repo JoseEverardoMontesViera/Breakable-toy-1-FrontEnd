@@ -9,10 +9,8 @@ import { MultiSelect } from 'primereact/multiselect';
 
 
 function App() {
-  // let unique = data.map(item => item.productCategory)
-  // .filter((value, index, self) => self.indexOf(value) === index)
+
   const [data,setData]=useState([]);
-  const [loading, setLoading] = useState<boolean>(true);
   const [registers, setRegisters]=useState([])
   const [filteredReg, setFilteredReg]=useState(registers)
   //Pagination pages
@@ -67,12 +65,13 @@ function App() {
       setSummaryRegisters(summary);
       setCategoryValue(categories);
   
-      console.log("All data fetched successfully");
+    console.log("All data fetched successfully");
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
       setLoading(false); // Ensure loading is set to false after all calls
     }
+
   };
   
   
