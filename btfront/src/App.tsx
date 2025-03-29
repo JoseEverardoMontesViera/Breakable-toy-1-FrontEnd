@@ -7,6 +7,7 @@ import {useForm} from "react-hook-form"
 import { MultiSelect } from 'primereact/multiselect';
 
 
+
 function App() {
   // let unique = data.map(item => item.productCategory)
   // .filter((value, index, self) => self.indexOf(value) === index)
@@ -14,12 +15,15 @@ function App() {
   const [loading, setLoading] = useState<boolean>(true);
   const [registers, setRegisters]=useState([])
   const [filteredReg, setFilteredReg]=useState(registers)
+  //Pagination pages
+  const [currentPage, setCurrentPage] = useState(0); // Página actual
+  const [totalPages, setTotalPages] = useState(0); // Total de páginas
   const [summaryRegisters, setSummaryRegisters]=useState([])
-  const [inputValue, setInputValue]=useState('')
-  const [catgorySelected, setCategorySelected]=useState('')
-  const [available, setAvailable]=useState("all")
+  const [inputValue, setInputValue] = useState('');
+  const [categorySelected, setCategorySelected] = useState([]);
+  const [available, setAvailable] = useState('all');
   const [isNewCategorie, setNewCategorie]=useState(false)
-  const [categoryValue, setCategoryValue]=useState([])
+  const [categoryValue, setCategoryValue] = useState([]);
   const [isOpen, setIsOpen]= useState(false);
   const [isOpenModify, setIsOpenModify]= useState(false);
   const [newProductModalInfo, SetnewProductModalInfo]= useState('');
@@ -58,8 +62,8 @@ function App() {
   
       // Update state
       setData(products);
-      setRegisters(products);
-      setFilteredReg(products);
+      // setRegisters(products);
+      // setFilteredReg(products);
       setSummaryRegisters(summary);
       setCategoryValue(categories);
   
@@ -75,110 +79,18 @@ function App() {
 
   useEffect(() => {
     fetchAllData();
+    fetchPaginatedProducts(currentPage, 10);
   }, []); // El arreglo vacío asegura que esto se ejecute solo una vez al montar el componente.
-  useEffect(() => {
-    setFilteredReg(registers); // Actualiza filteredReg cada vez que registers cambia
-  }, [registers]); // Dependencia de registers
+  // useEffect(() => {
+  //   setFilteredReg(registers); // Actualiza filteredReg cada vez que registers cambia
+  // }, [registers]); // Dependencia de registers
   
     const handleCloseModal =() =>{
         setIsOpen(!isOpen)
         window.location.reload();
     }
  
-    const handleCloseModalModify =() =>{
-        setIsOpen(!isOpenModify)
-        window.location.reload();
-    }
-
-    const handlerName = (searchTerm, category, available) =>{
-      let filteredData = []
-      setFilteredReg(registers)
-      console.log(filteredReg)
-      // let AllCategories = getCategories();
-      // console.log(AllCategories)
-      // let categoriesToSearch = ""
-      if(category.length == categoryValue.length){
-        console.log("todas")
-        console.log(available)
-        if(available=="all"){
-          filteredData =(data.filter(record=>{
-          return record.productName.toLowerCase().includes(searchTerm.toLowerCase())
-        }))}
-        else if(available=="true"){
-          filteredData =(data.filter(record=>{
-          return record.productName.toLowerCase().includes(searchTerm.toLowerCase()) && record.productQuantityStock !=0
-        }))}
-        else if(available=="false"){
-          filteredData =(data.filter(record=>{
-          return record.productName.toLowerCase().includes(searchTerm.toLowerCase()) && record.productQuantityStock ==0
-        }))
-      }
-      console.log("todas")
-        setFilteredReg(filteredData)
-
-        console.log(filteredData)  
-      }
-      else if(category!="" && category.length!=0 ){
-        category.forEach(element => {
-          if(available=="true"){
-            filteredData.push(data.filter(record=>{
-              console.log(record," recordavailable")
-              return record.productName.toLowerCase().includes(searchTerm.toLowerCase()) && record.productQuantityStock !=0 && record.productCategory.includes(element.toLowerCase())
-            }).pop())
-            
-            console.log(registers)
-            setFilteredReg(filteredData)
-          }
-          else if(available=="false"){
-            filteredData = (data.filter(record=>{
-              return record.productName.toLowerCase().includes(searchTerm.toLowerCase()) && record.productQuantityStock ==0 && record.productCategory.includes(element) 
-          }))
-          
-          setFilteredReg(filteredData)
-          }
-          else{
-            filteredData.push(data.filter(record=>{
-              return record.productName.toLowerCase().includes(searchTerm.toLowerCase()) && record.productCategory.includes(element)
-          }).pop())
-          console.log(filteredData, " se hizo push")
-          setFilteredReg(filteredData)
-          }
-            });
-       }
-       else{
-         console.log(available)
-         if(available=="all"){
-              filteredData =(data.filter(record=>{
-              return record.productName.toLowerCase().includes(searchTerm.toLowerCase())
-            }))
-            console.log(filteredData, " filtrado");
-            setFilteredReg(filteredData)
-            }
-            else if(available=="true"){
-              filteredData =(data.filter(record=>{
-                console.log(record)
-              return record.productName.toLowerCase().includes(searchTerm.toLowerCase()) && record.productQuantityStock !=0
-            }))
-            console.log(filteredData, " filtrado");
-            setFilteredReg(filteredData)
-            }
-            else if(available=="false"){
-              filteredData =(data.filter(record=>{
-                return record.productName.toLowerCase().includes(searchTerm.toLowerCase()) && record.productQuantityStock ==0
-            }))
-            setFilteredReg(filteredData)
-            }
-            else{
-              filteredData =(data.filter(record=>{
-                return record.productName.toLowerCase().includes(searchTerm.toLowerCase())
-            }))
-            setFilteredReg(filteredData)
-            }
-       }
-      
-    }
     
-
     const newProductSubmit = (data) =>{
       console.log("Fetched categories:", categoryValue);
       console.log(data)
@@ -231,6 +143,34 @@ function App() {
       const result = await response.json();
       return result
     }
+    const fetchPaginatedProducts = async (page, size) => {
+      try {
+        const response = await fetch(`http://localhost:9090/products/paginated?page=${page}&size=${size}`);
+        if (!response.ok) {
+          throw new Error('Error al cargar productos paginados');
+        }
+    
+        const { products, total } = await response.json(); // Desestructurar el objeto
+        setFilteredReg(products);
+        console.log(products)
+        setTotalPages(Math.ceil(total / size)); // Calcular el total de páginas
+      } catch (error) {
+        console.error('Error fetching paginated products:', error);
+      }
+    };
+    const goToNextPage = () => {
+      if (currentPage < totalPages - 1) {
+        setCurrentPage(currentPage + 1);
+        fetchPaginatedProducts(currentPage + 1, 10);
+      }
+    };
+  
+    const goToPreviousPage = () => {
+      if (currentPage > 0) {
+        setCurrentPage(currentPage - 1);
+        fetchPaginatedProducts(currentPage - 1, 10);
+      }
+    };
     const editProductSubmit = (data) =>{
       console.log("Metodo")
       console.log(data)
@@ -289,23 +229,52 @@ function App() {
       }
     };
 
-    const onSearch = (searchTerm, category, available) =>{
-      if(category==0){
-        category=""
+    // const onSearch = (searchTerm, category, available) =>{
+    //   if(category==0){
+    //     category=""
+    //   }
+    //   console.log(category);
+    //   handlerName(searchTerm, category, available);
+    // }
+    const onSearch = async () => {
+      try {
+        // Formatear el valor de disponibilidad
+        const availability = available === 'all' ? undefined : available === 'true';
+    
+        // Crear la URL con los parámetros de búsqueda
+        const queryParams = new URLSearchParams({
+          name: inputValue,
+          ...(categorySelected.length > 0 && { categories: categorySelected.join(',') }), // Convertir a cadena
+          ...(availability !== undefined && { inStock: String(availability) }) // Convertir a cadena
+        });
+    
+        const response = await fetch(`http://localhost:9090/products/search?${queryParams.toString()}`);
+        
+    
+        // Comprobar si la respuesta fue exitosa
+        if (!response.ok) {
+          throw new Error('Error al buscar productos');
+        }
+    
+        // Obtener los datos filtrados
+        const filteredProducts = await response.json();
+        console.log(filteredProducts);
+        setFilteredReg(filteredProducts); // Actualizar el estado con los productos filtrados
+    
+      } catch (error) {
+        console.error('Error al buscar productos:', error);
       }
-      console.log(category);
-      handlerName(searchTerm, category, available);
-    }
+    };
 
-    const changeInputValue = (event)=>{
-      setInputValue(event.target.value);
-    }
-    const changeCategorySelected = (event)=>{
-      setCategorySelected(event.target.value);
-    }
-    const changeAvailability = (event)=>{
-      setAvailable(event.target.value);
-    }
+    const changeInputValue = (e) => {
+      setInputValue(e.target.value);
+    };
+    const changeCategorySelected = (selectedCategories) => {
+      setCategorySelected(selectedCategories); // Asegúrate de que selectedCategories sea un arreglo
+    };
+    const changeAvailability = (e) => {
+      setAvailable(e.target.value);
+    };
     const categorieChange = (event)=>{
       console.log("Valor del select:", event.target.value)
       if(event==undefined){
@@ -548,8 +517,8 @@ function App() {
           <input type="text" name="SearchName"
             id="searchName" value={inputValue} onChange={changeInputValue}
           />
-          <MultiSelect className="select" value={catgorySelected} onChange={changeCategorySelected} options={Array.isArray(categoryValue) ? categoryValue : []}  placeholder="Select a category" maxSelectedLabels={3} />
-          {/* <MultiSelect className="select" value={catgorySelected} onChange={changeCategorySelected} options={categoryValue}  placeholder="Select a category" maxSelectedLabels={3} /> */}
+          <MultiSelect className="select" value={categorySelected} onChange={(e) => changeCategorySelected(e.value)} options={Array.isArray(categoryValue) ? categoryValue : []}  placeholder="Select a category" maxSelectedLabels={3} />
+          {/* <MultiSelect className="select" value={categorySelected} onChange={changeCategorySelected} options={Array.isArray(categoryValue) ? categoryValue : []}  placeholder="Select a category" maxSelectedLabels={3} /> */}
           {/* react Select categories */}
           <div className="divRow">
             <select name="SearchAvailability" className="select" id="searchAvailability" onChange={changeAvailability}>
@@ -559,7 +528,8 @@ function App() {
               
             </select>
           {/* react Select */}
-            <button onClick={()=>onSearch(inputValue,catgorySelected,available)}>Search</button>
+            <button onClick={()=>onSearch()}>Search</button>
+            {/* <button onClick={()=>onSearch(inputValue,catgorySelected,available)}>Search</button> */}
           </div>
         </div>
       </div>
@@ -659,12 +629,19 @@ function App() {
           columns={columns}
           // data={filteredReg}
           data={Array.isArray(filteredReg) ? filteredReg : []}
-          pagination
+          //pagination
           conditionalRowStyles={conditionalRowStyles}
           customStyles={tableProducts}
-          fixedHeader
         />
       </div>
+      <div className="pagination-controls">
+        <button onClick={goToPreviousPage} disabled={currentPage === 0}>Previous</button>
+        <span>Page {currentPage + 1} of {totalPages}</span>
+        <button onClick={goToNextPage} disabled={currentPage === totalPages - 1}>Next</button>
+      </div>
+      <br />
+      <br />
+      <br />
       {/* ProductsTable ends */}
       <div className="carrousel"></div>
       {/* Total princes begins */}
